@@ -1,50 +1,87 @@
-# Welcome to your Expo app 👋
+# Podcast AI - Mobile Application
 
-This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
+Podcast AI is a modern, React Native mobile application built with Expo that provides an intuitive interface for podcast listening and management. The application features a clean, dark-themed UI with seamless navigation and audio playback capabilities.
 
-## Get started
+## Features
 
-1. Install dependencies
+This application provides users with a comprehensive podcast listening experience through the following features:
 
+- Home screen featuring curated podcast recommendations
+- Personal library management for saved podcasts
+- User profile customization
+- Audio playback with essential controls
+- Like/bookmark functionality for favorite episodes
+- Clean, modern dark theme interface
+
+## Technology Stack
+
+The application is built using modern technologies:
+
+- React Native
+- Expo Framework
+- TypeScript
+- Zustand for state management
+- React Navigation
+- Expo AV for audio playback
+- Expo Vector Icons
+
+## Getting Started
+
+### Prerequisites
+
+- Node.js (v14 or newer)
+- npm or yarn
+- Expo CLI
+- iOS Simulator or Android Emulator (optional)
+
+### Installation
+
+1. Clone the repository:
+   ```bash
+   git clone https://github.com/jcoh3n/podcast-AI.git
+   cd podcast-AI
+   ```
+
+2. Install dependencies:
    ```bash
    npm install
    ```
 
-2. Start the app
-
+3. Start the development server:
    ```bash
-    npx expo start
+   npx expo start
    ```
 
-In the output, you'll find options to open the app in a
+### Running the Application
 
-- [development build](https://docs.expo.dev/develop/development-builds/introduction/)
-- [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
-- [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
-- [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
+After starting the development server, you can:
+- Run on iOS: Press 'i' in the terminal or select "Run on iOS simulator"
+- Run on Android: Press 'a' in the terminal or select "Run on Android emulator"
+- Run on physical device: Scan the QR code using the Expo Go app
 
-You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
+## Project Structure
 
-## Get a fresh project
+The project follows a clear, modular structure:
 
-When you're ready, run:
-
-```bash
-npm run reset-project
+```
+src/
+├── components/       # Reusable UI components
+├── screens/         # Main application screens
+├── store/          # State management
+├── theme/          # Styling constants
+└── utils/          # Utility functions
 ```
 
-This command will move the starter code to the **app-example** directory and create a blank **app** directory where you can start developing.
+## Contributing
 
-## Learn more
+We welcome contributions to the Podcast AI project. Please feel free to submit issues and pull requests.
 
-To learn more about developing your project with Expo, look at the following resources:
+## License
 
-- [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
-- [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
+This project is licensed under the MIT License - see the LICENSE file for details.
 
-## Join the community
+## Contact
 
-Join our community of developers creating universal apps.
-
-- [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
-- [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
+Project maintainers:  
+GitHub: [@jcoh3n](https://github.com/jcoh3n)  
+GitHub: [@wanderfulife](https://github.com/wanderfulife)
