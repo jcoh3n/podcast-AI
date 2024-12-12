@@ -1,6 +1,6 @@
 import React from 'react';
 import { View, Text, StyleSheet, Image, TouchableOpacity, ScrollView } from 'react-native';
-import { Ionicons } from '@expo/vector-icons';
+import { MaterialCommunityIcons } from '@expo/vector-icons';
 
 export const ProfileScreen = () => {
   return (
@@ -19,7 +19,7 @@ export const ProfileScreen = () => {
           </View>
           
           <TouchableOpacity style={styles.editButton}>
-            <Ionicons name="settings-outline" size={20} color="white" />
+            <MaterialCommunityIcons name="account-edit" size={20} color="white" />
             <Text style={styles.editButtonText}>Edit Profile</Text>
           </TouchableOpacity>
         </View>
@@ -27,7 +27,7 @@ export const ProfileScreen = () => {
         <View style={styles.statsContainer}>
           <View style={styles.statCard}>
             <View style={styles.statHeader}>
-              <Ionicons name="time-outline" size={20} color="#8B5CF6" />
+              <MaterialCommunityIcons name="clock-outline" size={20} color="#8B5CF6" />
               <Text style={styles.statTitle}>Listening Time</Text>
             </View>
             <Text style={styles.statValue}>24h 35m</Text>
@@ -36,12 +36,32 @@ export const ProfileScreen = () => {
 
           <View style={styles.statCard}>
             <View style={styles.statHeader}>
-              <Ionicons name="heart-outline" size={20} color="#8B5CF6" />
+              <MaterialCommunityIcons name="heart" size={20} color="#8B5CF6" />
               <Text style={styles.statTitle}>Liked Podcasts</Text>
             </View>
             <Text style={styles.statValue}>12</Text>
             <Text style={styles.statSubtext}>Total liked</Text>
           </View>
+        </View>
+
+        <View style={styles.menuContainer}>
+          <TouchableOpacity style={styles.menuItem}>
+            <MaterialCommunityIcons name="cog-outline" size={24} color="#8B5CF6" />
+            <Text style={styles.menuText}>Settings</Text>
+            <MaterialCommunityIcons name="chevron-right" size={24} color="#6B7280" />
+          </TouchableOpacity>
+
+          <TouchableOpacity style={styles.menuItem}>
+            <MaterialCommunityIcons name="help-circle-outline" size={24} color="#8B5CF6" />
+            <Text style={styles.menuText}>Help & Support</Text>
+            <MaterialCommunityIcons name="chevron-right" size={24} color="#6B7280" />
+          </TouchableOpacity>
+
+          <TouchableOpacity style={styles.menuItem}>
+            <MaterialCommunityIcons name="information-outline" size={24} color="#8B5CF6" />
+            <Text style={styles.menuText}>About</Text>
+            <MaterialCommunityIcons name="chevron-right" size={24} color="#6B7280" />
+          </TouchableOpacity>
         </View>
       </View>
     </ScrollView>
@@ -106,6 +126,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     gap: 16,
+    marginBottom: 16,
   },
   statCard: {
     flex: 1,
@@ -134,5 +155,24 @@ const styles = StyleSheet.create({
   statSubtext: {
     color: '#9CA3AF',
     fontSize: 14,
+  },
+  menuContainer: {
+    backgroundColor: 'rgba(31, 41, 55, 0.5)',
+    borderRadius: 12,
+    borderWidth: 1,
+    borderColor: 'rgba(55, 65, 81, 0.5)',
+  },
+  menuItem: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    padding: 16,
+    borderBottomWidth: 1,
+    borderBottomColor: 'rgba(55, 65, 81, 0.5)',
+  },
+  menuText: {
+    color: 'white',
+    fontSize: 16,
+    marginLeft: 12,
+    flex: 1,
   },
 });
