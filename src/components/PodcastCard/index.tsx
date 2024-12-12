@@ -9,24 +9,25 @@ interface PodcastCardProps {
   author: string;
   coverUrl: string;
   duration: string;
-  onPlay: () => void;
 }
 
-export const PodcastCard: React.FC<PodcastCardProps> = ({
-  id,
-  title,
-  author,
-  coverUrl,
-  duration,
-  onPlay,
-}) => {
-  const { likedPodcasts, toggleLike } = usePodcastStore();
-  const isLiked = likedPodcasts.has(id);
+export const PodcastCard: React.FC<PodcastCardProps> = (props) => {
+  const { likedPodcasts, toggleLike, setCurrentPodcast } = usePodcastStore();
+  const isLiked = likedPodcasts.has(props.id);
+
+  const handlePlay = () => {
+    setCurrentPodcast(props);
+  };
 
   return (
     <View style={styles.card}>
-      <TouchableOpacity onPress={onPlay} style={styles.imageContainer}>
-        <Image source={{ uri: coverUrl }} style={styles.image} />
+      <TouchableOpacity 
+        onPress={handlePlay} 
+        style={styles.imageContainer}
+        accessibilityLabel={`Play ${props.title} by ${props.author}`}
+        accessibilityRole="button"
+      >
+        <Image source={{ uri: props.coverUrl }} style={styles.image} />
         <View style={styles.playButton}>
           <MaterialCommunityIcons name="play" size={24} color="white" />
         </View>
@@ -35,10 +36,15 @@ export const PodcastCard: React.FC<PodcastCardProps> = ({
       <View style={styles.content}>
         <View style={styles.titleRow}>
           <View style={styles.textContainer}>
-            <Text style={styles.title} numberOfLines={1}>{title}</Text>
-            <Text style={styles.author}>{author}</Text>
+            <Text style={styles.title} numberOfLines={1}>{props.title}</Text>
+            <Text style={styles.author}>{props.author}</Text>
           </View>
-          <TouchableOpacity onPress={() => toggleLike(id)}>
+          <TouchableOpacity 
+            onPress={() => toggleLike(props.id)}
+            accessibilityLabel={isLiked ? "Unlike podcast" : "Like podcast"}
+            accessibilityRole="button"
+            accessibilityState={{ selected: isLiked }}
+          >
             <MaterialCommunityIcons
               name={isLiked ? "heart" : "heart-outline"}
               size={24}
@@ -46,7 +52,7 @@ export const PodcastCard: React.FC<PodcastCardProps> = ({
             />
           </TouchableOpacity>
         </View>
-        <Text style={styles.duration}>{duration}</Text>
+        <Text style={styles.duration}>{props.duration}</Text>
       </View>
     </View>
   );

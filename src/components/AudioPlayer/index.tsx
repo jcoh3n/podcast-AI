@@ -1,31 +1,46 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { View, Text, Image, StyleSheet, TouchableOpacity, Platform } from 'react-native';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
+import { usePodcastStore } from '../../store/podcast';
 
 export const AudioPlayer = () => {
-  const [isPlaying, setIsPlaying] = useState(false);
+  const { currentPodcast, isPlaying, togglePlayback } = usePodcastStore();
+
+  if (!currentPodcast) return null;
 
   return (
     <View style={styles.container}>
       <View style={styles.content}>
         <View style={styles.leftSection}>
           <Image
-            source={{ uri: 'https://images.unsplash.com/photo-1478737270239-2f02b77fc618' }}
+            source={{ uri: currentPodcast.coverUrl }}
             style={styles.cover}
           />
           <View style={styles.titleContainer}>
-            <Text style={styles.title} numberOfLines={1}>Current Podcast</Text>
-            <Text style={styles.subtitle} numberOfLines={1}>Episode Title</Text>
+            <Text style={styles.title} numberOfLines={1}>
+              {currentPodcast.title}
+            </Text>
+            <Text style={styles.subtitle} numberOfLines={1}>
+              {currentPodcast.author}
+            </Text>
           </View>
         </View>
 
         <View style={styles.controls}>
-          <TouchableOpacity style={styles.controlButton}>
+          <TouchableOpacity 
+            style={styles.controlButton}
+            accessibilityLabel="Previous track"
+            accessibilityRole="button"
+          >
             <MaterialCommunityIcons name="skip-previous" size={24} color="white" />
           </TouchableOpacity>
+          
           <TouchableOpacity 
             style={styles.playButton} 
-            onPress={() => setIsPlaying(!isPlaying)}
+            onPress={togglePlayback}
+            accessibilityLabel={isPlaying ? "Pause" : "Play"}
+            accessibilityRole="button"
+            accessibilityState={{ selected: isPlaying }}
           >
             <MaterialCommunityIcons 
               name={isPlaying ? "pause" : "play"} 
@@ -34,7 +49,12 @@ export const AudioPlayer = () => {
               style={styles.playIcon}
             />
           </TouchableOpacity>
-          <TouchableOpacity style={styles.controlButton}>
+          
+          <TouchableOpacity 
+            style={styles.controlButton}
+            accessibilityLabel="Next track"
+            accessibilityRole="button"
+          >
             <MaterialCommunityIcons name="skip-next" size={24} color="white" />
           </TouchableOpacity>
         </View>
@@ -42,6 +62,7 @@ export const AudioPlayer = () => {
     </View>
   );
 };
+
 const styles = StyleSheet.create({
   container: {
     width: '100%',

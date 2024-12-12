@@ -6,9 +6,11 @@ import { HomeScreen } from './src/screens/HomeScreen';
 import { LibraryScreen } from './src/screens/LibraryScreen';
 import { ProfileScreen } from './src/screens/ProfileScreen';
 import { AudioPlayer } from './src/components/AudioPlayer';
+import { usePodcastStore } from './src/store/podcast';
 
 export default function App() {
   const [currentScreen, setCurrentScreen] = useState('Home');
+  const { currentPodcast } = usePodcastStore();
 
   const renderScreen = () => {
     switch (currentScreen) {
@@ -28,7 +30,10 @@ export default function App() {
       <StatusBar style="light" />
       
       {/* Main Content */}
-      <View style={[styles.content]}>
+      <View style={[
+        styles.content,
+        currentPodcast && styles.contentWithPlayer
+      ]}>
         {renderScreen()}
       </View>
 
@@ -42,6 +47,9 @@ export default function App() {
           <TouchableOpacity
             style={styles.navButton}
             onPress={() => setCurrentScreen('Home')}
+            accessibilityLabel="Home"
+            accessibilityRole="tab"
+            accessibilityState={{ selected: currentScreen === 'Home' }}
           >
             <MaterialCommunityIcons
               name={currentScreen === 'Home' ? 'home' : 'home-outline'}
@@ -53,6 +61,9 @@ export default function App() {
           <TouchableOpacity
             style={styles.navButton}
             onPress={() => setCurrentScreen('Library')}
+            accessibilityLabel="Library"
+            accessibilityRole="tab"
+            accessibilityState={{ selected: currentScreen === 'Library' }}
           >
             <MaterialCommunityIcons
               name="library"
@@ -64,6 +75,9 @@ export default function App() {
           <TouchableOpacity
             style={styles.navButton}
             onPress={() => setCurrentScreen('Profile')}
+            accessibilityLabel="Profile"
+            accessibilityRole="tab"
+            accessibilityState={{ selected: currentScreen === 'Profile' }}
           >
             <MaterialCommunityIcons
               name={currentScreen === 'Profile' ? 'account' : 'account-outline'}
@@ -85,6 +99,10 @@ const styles = StyleSheet.create({
   },
   content: {
     flex: 1,
+    paddingBottom: 60, // Height of the navbar
+  },
+  contentWithPlayer: {
+    paddingBottom: 140, // Height of navbar + audio player
   },
   bottomContainer: {
     position: 'absolute',
