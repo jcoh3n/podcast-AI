@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+// App.tsx
+import React, { useEffect } from 'react';
 import { View, TouchableOpacity, StyleSheet, Platform } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
@@ -7,10 +8,24 @@ import { LibraryScreen } from './src/screens/LibraryScreen';
 import { ProfileScreen } from './src/screens/ProfileScreen';
 import { AudioPlayer } from './src/components/AudioPlayer';
 import { usePodcastStore } from './src/store/podcast';
+import { loginAnonymously } from './src/config/firebase';
+import { LogBox } from 'react-native';
+
+// Silence common warnings
+LogBox.ignoreLogs([
+  'AsyncStorage',
+  'Warning:',
+  'Setting a timer'
+]);
 
 export default function App() {
-  const [currentScreen, setCurrentScreen] = useState('Home');
+  const [currentScreen, setCurrentScreen] = React.useState('Home');
   const { currentPodcast } = usePodcastStore();
+
+  useEffect(() => {
+    // Auto login on app start
+    loginAnonymously();
+  }, []);
 
   const renderScreen = () => {
     switch (currentScreen) {
@@ -29,7 +44,6 @@ export default function App() {
     <View style={styles.container}>
       <StatusBar style="light" />
       
-      {/* Main Content */}
       <View style={[
         styles.content,
         currentPodcast && styles.contentWithPlayer
@@ -37,12 +51,9 @@ export default function App() {
         {renderScreen()}
       </View>
 
-      {/* Fixed Bottom Container */}
       <View style={styles.bottomContainer}>
-        {/* Audio Player */}
         <AudioPlayer />
 
-        {/* Navigation Bar */}
         <View style={styles.navbar}>
           <TouchableOpacity
             style={styles.navButton}
@@ -99,10 +110,10 @@ const styles = StyleSheet.create({
   },
   content: {
     flex: 1,
-    paddingBottom: 60, // Height of the navbar
+    paddingBottom: 60,
   },
   contentWithPlayer: {
-    paddingBottom: 140, // Height of navbar + audio player
+    paddingBottom: 140,
   },
   bottomContainer: {
     position: 'absolute',

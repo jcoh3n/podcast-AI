@@ -7,7 +7,7 @@ export const AudioPlayer = () => {
   const { currentPodcast, isPlaying, togglePlayback } = usePodcastStore();
 
   if (!currentPodcast) return null;
-
+  
   return (
     <View style={styles.container}>
       <View style={styles.content}>

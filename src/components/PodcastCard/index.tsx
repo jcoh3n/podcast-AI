@@ -2,14 +2,9 @@ import React from 'react';
 import { View, Text, StyleSheet, Image, TouchableOpacity } from 'react-native';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { usePodcastStore } from '../../store/podcast';
+import { Podcast } from '../../types/podcast';
 
-interface PodcastCardProps {
-  id: number;
-  title: string;
-  author: string;
-  coverUrl: string;
-  duration: string;
-}
+interface PodcastCardProps extends Podcast {}
 
 export const PodcastCard: React.FC<PodcastCardProps> = (props) => {
   const { likedPodcasts, toggleLike, setCurrentPodcast } = usePodcastStore();
@@ -18,7 +13,7 @@ export const PodcastCard: React.FC<PodcastCardProps> = (props) => {
   const handlePlay = () => {
     setCurrentPodcast(props);
   };
-
+  
   return (
     <View style={styles.card}>
       <TouchableOpacity 

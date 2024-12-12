@@ -1,15 +1,11 @@
+// src/components/PodcastList/index.tsx
 import React from 'react';
 import { View, Text, ScrollView, Image, TouchableOpacity, StyleSheet } from 'react-native';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { usePodcastStore } from '../../store/podcast';
+import { Podcast } from '../../types/podcast';
 
-interface PodcastItemProps {
-  id: number;
-  title: string;
-  author: string;
-  coverUrl: string;
-  duration: string;
-}
+interface PodcastItemProps extends Podcast {}
 
 const PodcastItem: React.FC<PodcastItemProps> = (props) => {
   const { likedPodcasts, toggleLike, setCurrentPodcast } = usePodcastStore();
@@ -59,7 +55,7 @@ const PodcastItem: React.FC<PodcastItemProps> = (props) => {
 
 interface PodcastListProps {
   title: string;
-  podcasts: PodcastItemProps[];
+  podcasts: Podcast[];
 }
 
 const PodcastList: React.FC<PodcastListProps> = ({

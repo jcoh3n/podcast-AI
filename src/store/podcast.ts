@@ -1,46 +1,79 @@
+// src/store/podcast.ts
 import { create } from 'zustand';
+import { mockPodcasts } from '../data/mockPodcasts';
 
-interface Podcast {
-  id: number;
+export interface Podcast {
+  id: string;
   title: string;
   author: string;
   coverUrl: string;
   duration: string;
+  category?: string;
+  description?: string;
 }
 
 interface PodcastStore {
-  likedPodcasts: Set<number>;
+  // State
+  podcasts: Podcast[];
+  likedPodcasts: Set<string>;
+  recentPodcasts: Podcast[];
   currentPodcast: Podcast | null;
   isPlaying: boolean;
-  toggleLike: (id: number) => void;
+  isLoading: boolean;
+  error: string | null;
+
+  // Actions
+  initializeStore: () => void;
+  toggleLike: (podcastId: string) => void;
   setCurrentPodcast: (podcast: Podcast) => void;
   togglePlayback: () => void;
 }
 
-export const usePodcastStore = create<PodcastStore>((set) => ({
+export const usePodcastStore = create<PodcastStore>((set, get) => ({
+  podcasts: [],
   likedPodcasts: new Set(),
+  recentPodcasts: [],
   currentPodcast: null,
   isPlaying: false,
-  
-  toggleLike: (id) =>
-    set((state) => {
-      const newLiked = new Set(state.likedPodcasts);
-      if (newLiked.has(id)) {
-        newLiked.delete(id);
-      } else {
-        newLiked.add(id);
-      }
-      return { likedPodcasts: newLiked };
-    }),
+  isLoading: false,
+  error: null,
+
+  initializeStore: () => {
+    set({
+      podcasts: mockPodcasts,
+      isLoading: false,
+      error: null
+    });
+  },
+
+  toggleLike: (podcastId: string) => {
+    const { likedPodcasts } = get();
+    const newLiked = new Set(likedPodcasts);
     
-  setCurrentPodcast: (podcast) =>
-    set(() => ({
-      currentPodcast: podcast,
+    if (newLiked.has(podcastId)) {
+      newLiked.delete(podcastId);
+    } else {
+      newLiked.add(podcastId);
+    }
+    
+    set({ likedPodcasts: newLiked });
+  },
+
+  setCurrentPodcast: (podcast: Podcast) => {
+    const { recentPodcasts } = get();
+    const newRecentPodcasts = [
+      podcast,
+      ...recentPodcasts.filter(p => p.id !== podcast.id)
+    ].slice(0, 5); // Keep only last 5
+
+    set({ 
+      currentPodcast: podcast, 
       isPlaying: true,
-    })),
-    
-  togglePlayback: () =>
-    set((state) => ({
-      isPlaying: !state.isPlaying,
-    })),
+      recentPodcasts: newRecentPodcasts
+    });
+  },
+
+  togglePlayback: () => {
+    set(state => ({ isPlaying: !state.isPlaying }));
+  },
 }));

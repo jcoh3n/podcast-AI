@@ -13,6 +13,8 @@ web-build/
 .DS_Store
 .env
 *.log
+google-services.json
+GoogleService-Info.plist
 
 # IDE specific files
 .idea/

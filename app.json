@@ -1,7 +1,7 @@
 {
   "expo": {
-    "name": "Podcast AI",
-    "slug": "podcast-mobile",
+    "name": "PodcastAI",
+    "displayName": "PodcastAI",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
