@@ -1,6 +1,7 @@
 import React from 'react';
 import { View, Text, ScrollView, StyleSheet } from 'react-native';
 import { PodcastCard } from '../components/PodcastCard';
+import { MaterialCommunityIcons } from '@expo/vector-icons';
 
 export const HomeScreen = () => {
   const featuredPodcasts = [
@@ -30,8 +31,11 @@ export const HomeScreen = () => {
   return (
     <View style={styles.container}>
       <ScrollView>
-        <View style={styles.content}>
+        <View style={styles.header}>
+          <MaterialCommunityIcons name="podcast" size={32} color="#8B5CF6" />
           <Text style={styles.title}>Featured Podcasts</Text>
+        </View>
+        <View style={styles.content}>
           {featuredPodcasts.map((podcast) => (
             <PodcastCard
               key={podcast.id}
@@ -50,13 +54,20 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#121212',
   },
+  header: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    padding: 16,
+    paddingTop: 20,
+  },
   content: {
     padding: 16,
+    paddingTop: 0,
   },
   title: {
     fontSize: 24,
     color: '#FFFFFF',
-    marginBottom: 16,
     fontWeight: '600',
+    marginLeft: 12,
   },
 });

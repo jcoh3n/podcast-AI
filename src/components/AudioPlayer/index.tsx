@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import { View, Text, Image, StyleSheet, TouchableOpacity } from 'react-native';
-import { Ionicons } from '@expo/vector-icons';
+import { View, Text, Image, StyleSheet, TouchableOpacity, Platform } from 'react-native';
+import { MaterialCommunityIcons } from '@expo/vector-icons';
 
 export const AudioPlayer = () => {
   const [isPlaying, setIsPlaying] = useState(false);
@@ -21,31 +21,32 @@ export const AudioPlayer = () => {
 
         <View style={styles.controls}>
           <TouchableOpacity style={styles.controlButton}>
-            <Ionicons name="play-skip-back" size={24} color="white" />
+            <MaterialCommunityIcons name="skip-previous" size={24} color="white" />
           </TouchableOpacity>
           <TouchableOpacity 
             style={styles.playButton} 
             onPress={() => setIsPlaying(!isPlaying)}
           >
-            <Ionicons name={isPlaying ? "pause" : "play"} size={28} color="white" />
+            <MaterialCommunityIcons 
+              name={isPlaying ? "pause" : "play"} 
+              size={28} 
+              color="white"
+              style={styles.playIcon}
+            />
           </TouchableOpacity>
           <TouchableOpacity style={styles.controlButton}>
-            <Ionicons name="play-skip-forward" size={24} color="white" />
+            <MaterialCommunityIcons name="skip-next" size={24} color="white" />
           </TouchableOpacity>
         </View>
       </View>
     </View>
   );
 };
-
 const styles = StyleSheet.create({
   container: {
-    position: 'absolute',
-    bottom: 60,
     width: '100%',
-    backgroundColor: '#1F2937',
-    borderTopWidth: 1,
-    borderTopColor: '#374151',
+    borderBottomWidth: 1,
+    borderBottomColor: '#374151',
   },
   content: {
     flexDirection: 'row',
@@ -92,5 +93,8 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     marginHorizontal: 8,
+  },
+  playIcon: {
+    marginLeft: Platform.OS === 'ios' ? 2 : 0,
   },
 });

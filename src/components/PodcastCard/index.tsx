@@ -1,6 +1,6 @@
 import React from 'react';
-import { View, Text, StyleSheet, Image, TouchableOpacity, ScrollView } from 'react-native';
-import { Ionicons } from '@expo/vector-icons';
+import { View, Text, StyleSheet, Image, TouchableOpacity } from 'react-native';
+import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { usePodcastStore } from '../../store/podcast';
 
 interface PodcastCardProps {
@@ -28,7 +28,7 @@ export const PodcastCard: React.FC<PodcastCardProps> = ({
       <TouchableOpacity onPress={onPlay} style={styles.imageContainer}>
         <Image source={{ uri: coverUrl }} style={styles.image} />
         <View style={styles.playButton}>
-          <Ionicons name="play" size={24} color="white" />
+          <MaterialCommunityIcons name="play" size={24} color="white" />
         </View>
       </TouchableOpacity>
       
@@ -39,7 +39,7 @@ export const PodcastCard: React.FC<PodcastCardProps> = ({
             <Text style={styles.author}>{author}</Text>
           </View>
           <TouchableOpacity onPress={() => toggleLike(id)}>
-            <Ionicons
+            <MaterialCommunityIcons
               name={isLiked ? "heart" : "heart-outline"}
               size={24}
               color={isLiked ? '#8B5CF6' : '#9CA3AF'}
