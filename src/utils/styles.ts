@@ -1,7 +1,7 @@
 import { StyleSheet } from 'react-native';
 import { colors } from '../theme/colors';
-import { spacing } from '../theme/spacing';
 import { typography } from '../theme/typography';
+import { layout } from '../theme/layout';
 
 export const globalStyles = StyleSheet.create({
   container: {
@@ -11,18 +11,36 @@ export const globalStyles = StyleSheet.create({
   safeArea: {
     flex: 1,
     backgroundColor: colors.background,
+    paddingTop: layout.safe.top,
+    paddingBottom: layout.safe.bottom,
   },
   content: {
-    padding: spacing.md,
+    padding: layout.spacing.md,
   },
-  title: {
+  screenTitle: {
     fontSize: typography.sizes.xl,
-    fontWeight: typography.weights.bold,
+    fontFamily: typography.fonts.bold,
     color: colors.foreground,
-    marginBottom: spacing.md,
+    marginBottom: layout.spacing.md,
   },
   text: {
     fontSize: typography.sizes.md,
+    fontFamily: typography.fonts.regular,
     color: colors.foreground,
+    lineHeight: typography.sizes.md * typography.lineHeights.normal,
+  },
+  card: {
+    backgroundColor: colors.gray[800],
+    borderRadius: layout.borderRadius.lg,
+    padding: layout.spacing.md,
+    borderWidth: 1,
+    borderColor: colors.gray[700],
+  },
+  shadow: {
+    shadowColor: colors.background,
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
+    elevation: 5,
   },
 });

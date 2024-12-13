@@ -1,5 +1,16 @@
+// src/components/ui/Button.tsx
 import React from 'react';
-import { TouchableOpacity, Text, StyleSheet, TouchableOpacityProps } from 'react-native';
+import { 
+  TouchableOpacity, 
+  Text, 
+  StyleSheet, 
+  TouchableOpacityProps,
+  Animated,
+  Easing
+} from 'react-native';
+import { colors } from '../../theme/colors';
+import { spacing } from '../../theme/spacing';
+import { typography } from '../../theme/typography';
 
 interface ButtonProps extends TouchableOpacityProps {
   variant?: 'primary' | 'secondary' | 'ghost';
@@ -12,99 +23,149 @@ export const Button: React.FC<ButtonProps> = ({
   size = 'md', 
   children, 
   style,
+  onPress,
+  disabled,
   ...props 
 }) => {
+  // Animation value for scale effect
+  const scaleAnim = React.useRef(new Animated.Value(1)).current;
+  
+  // Enhanced press feedback
+  const handlePressIn = () => {
+    Animated.timing(scaleAnim, {
+      toValue: 0.95,
+      duration: 150,
+      easing: Easing.inOut(Easing.quad),
+      useNativeDriver: true,
+    }).start();
+  };
+
+  const handlePressOut = () => {
+    Animated.spring(scaleAnim, {
+      toValue: 1,
+      friction: 4,
+      tension: 40,
+      useNativeDriver: true,
+    }).start();
+  };
+
+  const handlePress = (e: any) => {
+    // Add haptic feedback here if desired
+    if (onPress) {
+      onPress(e);
+    }
+  };
+
   const getButtonStyles = () => {
     const styles = [baseStyles.base];
     
-    // Add variant styles
-    if (variant === 'primary') styles.push(baseStyles.primary);
-    if (variant === 'secondary') styles.push(baseStyles.secondary);
-    if (variant === 'ghost') styles.push(baseStyles.ghost);
+    // Add variant styles with enhanced visual hierarchy
+    if (variant === 'primary') styles.push({ ...baseStyles.base, ...baseStyles.primary });
+    if (variant === 'secondary') styles.push({ ...baseStyles.base, ...baseStyles.secondary });
+    if (variant === 'ghost') styles.push({ ...baseStyles.base, ...baseStyles.ghost });
     
-    // Add size styles
-    if (size === 'sm') styles.push(baseStyles.small);
-    if (size === 'md') styles.push(baseStyles.medium);
-    if (size === 'lg') styles.push(baseStyles.large);
+    // Enhanced size styles with better touch targets
+    if (size === 'sm') styles.push({ ...baseStyles.base, ...baseStyles.small });
+    if (size === 'md') styles.push({ ...baseStyles.base, ...baseStyles.medium });
+    if (size === 'lg') styles.push({ ...baseStyles.base, ...baseStyles.large });
     
+    if (disabled) styles.push({ ...baseStyles.base, ...baseStyles.disabled });
     if (style) styles.push(style);
     
     return styles;
   };
 
-  const getTextStyles = () => {
-    const styles = [baseStyles.text];
-    
-    // Add variant text styles
-    if (variant === 'primary') styles.push(baseStyles.primaryText);
-    if (variant === 'secondary') styles.push(baseStyles.secondaryText);
-    if (variant === 'ghost') styles.push(baseStyles.ghostText);
-    
-    // Add size text styles
-    if (size === 'sm') styles.push(baseStyles.smallText);
-    if (size === 'md') styles.push(baseStyles.mediumText);
-    if (size === 'lg') styles.push(baseStyles.largeText);
-    
-    return styles;
-  };
-
   return (
-    <TouchableOpacity style={getButtonStyles()} {...props}>
-      {typeof children === 'string' ? (
-        <Text style={getTextStyles()}>{children}</Text>
-      ) : (
-        children
-      )}
-    </TouchableOpacity>
+    <Animated.View style={{ transform: [{ scale: scaleAnim }] }}>
+      <TouchableOpacity 
+        style={getButtonStyles()} 
+        onPress={handlePress}
+        onPressIn={handlePressIn}
+        onPressOut={handlePressOut}
+        disabled={disabled}
+        accessibilityRole="button"
+        accessibilityState={{ disabled }}
+        {...props}
+      >
+        {typeof children === 'string' ? (
+          <Text style={[
+            baseStyles.text,
+            size === 'sm' && baseStyles.smallText,
+            size === 'lg' && baseStyles.largeText,
+            variant === 'ghost' && baseStyles.ghostText,
+            disabled && baseStyles.disabledText
+          ]}>
+            {children}
+          </Text>
+        ) : (
+          children
+        )}
+      </TouchableOpacity>
+    </Animated.View>
   );
 };
 
 const baseStyles = StyleSheet.create({
   base: {
-    borderRadius: 9999,
+    borderRadius: 12,
     alignItems: 'center',
     justifyContent: 'center',
+    flexDirection: 'row',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 2,
   },
   primary: {
-    backgroundColor: '#8B5CF6',
+    backgroundColor: colors.primary,
+    borderWidth: 1,
+    borderColor: `${colors.primary}66`,
   },
   secondary: {
-    backgroundColor: '#374151',
+    backgroundColor: colors.gray[800],
+    borderWidth: 1,
+    borderColor: colors.gray[700],
   },
   ghost: {
     backgroundColor: 'transparent',
+    borderWidth: 1,
+    borderColor: colors.gray[700],
+  },
+  disabled: {
+    opacity: 0.5,
   },
   small: {
-    paddingHorizontal: 12,
-    paddingVertical: 4,
+    paddingHorizontal: spacing.md,
+    paddingVertical: spacing.sm,
+    minHeight: 36,
   },
   medium: {
-    paddingHorizontal: 16,
-    paddingVertical: 8,
+    paddingHorizontal: spacing.lg,
+    paddingVertical: spacing.md,
+    minHeight: 44,
   },
   large: {
-    paddingHorizontal: 24,
-    paddingVertical: 12,
+    paddingHorizontal: spacing.xl,
+    paddingVertical: spacing.lg,
+    minHeight: 52,
   },
   text: {
-    fontWeight: '500',
-  },
-  primaryText: {
-    color: '#FFFFFF',
-  },
-  secondaryText: {
-    color: '#FFFFFF',
-  },
-  ghostText: {
-    color: '#FFFFFF',
+    color: colors.foreground,
+    fontSize: typography.sizes.md,
+    fontWeight: '600',
+    textAlign: 'center',
   },
   smallText: {
-    fontSize: 14,
-  },
-  mediumText: {
-    fontSize: 16,
+    fontSize: typography.sizes.sm,
   },
   largeText: {
-    fontSize: 18,
+    fontSize: typography.sizes.lg,
+  },
+  ghostText: {
+    color: colors.primary,
+  },
+  disabledText: {
+    opacity: 0.7,
   },
 });

@@ -1,13 +1,15 @@
 // src/screens/LibraryScreen.tsx
 import React, { useEffect } from 'react';
 import { View, Text, ScrollView, StyleSheet, ActivityIndicator } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import { MaterialCommunityIcons } from '@expo/vector-icons';
 import PodcastList from '../components/PodcastList';
 import { Button } from '../components/ui/Button';
-import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { usePodcastStore } from '../store/podcast';
 import { colors } from '../theme/colors';
-import { spacing } from '../theme/spacing';
+import { layout } from '../theme/layout';
 import { typography } from '../theme/typography';
+import { accessibility } from '../utils/accessibility';
 
 export const LibraryScreen = () => {
   const { 
@@ -23,94 +25,96 @@ export const LibraryScreen = () => {
     initializeStore();
   }, []);
 
-  // Get liked podcasts from the full podcasts list using the likedPodcasts Set
   const likedPodcastsList = podcasts.filter(podcast => 
     likedPodcasts.has(podcast.id)
   );
 
   if (isLoading) {
     return (
-      <View style={styles.centerContainer}>
-        <ActivityIndicator size="large" color={colors.primary} />
-      </View>
+      <SafeAreaView style={styles.container}>
+        <View style={styles.centerContainer}>
+          <ActivityIndicator size="large" color={colors.primary} />
+        </View>
+      </SafeAreaView>
     );
   }
 
   if (error) {
     return (
-      <View style={styles.centerContainer}>
-        <Text style={styles.errorText}>{error}</Text>
-      </View>
+      <SafeAreaView style={styles.container}>
+        <View style={styles.centerContainer}>
+          <Text style={styles.errorText}>{error}</Text>
+        </View>
+      </SafeAreaView>
     );
   }
 
   return (
-    <ScrollView style={styles.container}>
-      <View style={styles.header}>
-        <Text style={styles.title}>Your Library</Text>
-        <Button 
-          variant="ghost" 
-          size="sm"
-          style={styles.filterButton}
-        >
-          <View style={styles.filterButtonContent}>
-            <MaterialCommunityIcons 
-              name="filter-variant" 
-              size={20} 
-              color={colors.primary} 
-            />
-            <Text style={styles.filterButtonText}>Filter</Text>
-          </View>
-        </Button>
-      </View>
-
-      {likedPodcastsList.length > 0 || recentPodcasts.length > 0 ? (
-        <View style={styles.content}>
-          {recentPodcasts.length > 0 && (
-            <PodcastList
-              title="Recently Played"
-              podcasts={recentPodcasts}
-            />
-          )}
-          
-          {likedPodcastsList.length > 0 && (
-            <PodcastList
-              title="Your Favorites"
-              podcasts={likedPodcastsList}
-            />
-          )}
-          
-          {/* Optional: Show downloaded episodes if you implement that feature */}
-          {/* <PodcastList
-            title="Downloaded Episodes"
-            podcasts={downloadedPodcasts}
-          /> */}
-        </View>
-      ) : (
-        <View style={styles.emptyState}>
-          <MaterialCommunityIcons 
-            name="playlist-music" 
-            size={64} 
-            color={colors.gray[600]} 
-          />
-          <Text style={styles.emptyTitle}>Your library is empty</Text>
-          <Text style={styles.emptyText}>
-            Start exploring and like some podcasts to add them to your library
-          </Text>
-          <Button
-            variant="primary"
-            size="md"
-            style={styles.exploreButton}
-            onPress={() => {
-              // Navigate to explore section or handle exploration
-              console.log('Navigate to explore section');
-            }}
+    <SafeAreaView style={styles.container}>
+      <ScrollView 
+        style={styles.scrollView}
+        contentContainerStyle={styles.scrollContent}
+      >
+        <View style={styles.header}>
+          <Text style={styles.title}>Your Library</Text>
+          <Button 
+            variant="ghost" 
+            size="sm"
+            style={styles.filterButton}
           >
-            Explore Podcasts
+            <View style={styles.filterButtonContent}>
+              <MaterialCommunityIcons 
+                name="filter-variant" 
+                size={accessibility.scaleFontSize(20)} 
+                color={colors.primary} 
+              />
+              <Text style={styles.filterButtonText}>Filter</Text>
+            </View>
           </Button>
         </View>
-      )}
-    </ScrollView>
+
+        {likedPodcastsList.length > 0 || recentPodcasts.length > 0 ? (
+          <View style={styles.content}>
+            {recentPodcasts.length > 0 && (
+              <PodcastList
+                title="Recently Played"
+                podcasts={recentPodcasts}
+              />
+            )}
+            
+            {likedPodcastsList.length > 0 && (
+              <PodcastList
+                title="Your Favorites"
+                podcasts={likedPodcastsList}
+              />
+            )}
+          </View>
+        ) : (
+          <View style={styles.emptyState}>
+            <MaterialCommunityIcons 
+              name="playlist-music" 
+              size={accessibility.scaleFontSize(64)} 
+              color={colors.gray[600]} 
+            />
+            <Text style={styles.emptyTitle}>Your library is empty</Text>
+            <Text style={styles.emptyText}>
+              Start exploring and like some podcasts to add them to your library
+            </Text>
+            <Button
+              variant="primary"
+              size="md"
+              style={styles.exploreButton}
+              onPress={() => {
+                // Navigate to explore section
+                console.log('Navigate to explore section');
+              }}
+            >
+              Explore Podcasts
+            </Button>
+          </View>
+        )}
+      </ScrollView>
+    </SafeAreaView>
   );
 };
 
@@ -119,21 +123,28 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: colors.background,
   },
+  scrollView: {
+    flex: 1,
+  },
+  scrollContent: {
+    flexGrow: 1,
+  },
   header: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    paddingHorizontal: spacing.md,
-    paddingTop: spacing.lg,
-    paddingBottom: spacing.md,
+    paddingHorizontal: layout.spacing.md,
+    paddingTop: layout.spacing.lg,
+    paddingBottom: layout.spacing.md,
   },
   title: {
     fontSize: typography.sizes.xxl,
-    fontWeight: '700',
+    fontFamily: typography.fonts.bold,
     color: colors.foreground,
   },
   filterButton: {
-    paddingHorizontal: spacing.md,
+    minWidth: accessibility.touchableSize.min,
+    minHeight: accessibility.touchableSize.min,
   },
   filterButtonContent: {
     flexDirection: 'row',
@@ -141,46 +152,49 @@ const styles = StyleSheet.create({
   },
   filterButtonText: {
     color: colors.primary,
-    marginLeft: spacing.xs,
+    marginLeft: layout.spacing.xs,
     fontSize: typography.sizes.md,
-    fontWeight: '500',
+    fontFamily: typography.fonts.medium,
   },
   content: {
-    paddingVertical: spacing.md,
+    paddingVertical: layout.spacing.md,
+  },
+  section: {
+    marginBottom: layout.spacing.xl,
   },
   centerContainer: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: colors.background,
-    minHeight: 400, // Ensure spinner is vertically centered
+    minHeight: 400,
   },
   errorText: {
-    color: colors.foreground,
+    color: colors.error,
     fontSize: typography.sizes.md,
+    fontFamily: typography.fonts.medium,
     textAlign: 'center',
-    padding: spacing.lg,
+    padding: layout.spacing.lg,
   },
   emptyState: {
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
-    paddingHorizontal: spacing.xl,
-    paddingVertical: spacing.xxl,
-    minHeight: 400, // Ensure empty state is vertically centered
+    paddingHorizontal: layout.spacing.xl,
+    paddingVertical: layout.spacing.xxl,
+    minHeight: 400,
   },
   emptyTitle: {
     fontSize: typography.sizes.xl,
-    fontWeight: '700',
+    fontFamily: typography.fonts.bold,
     color: colors.foreground,
-    marginTop: spacing.lg,
-    marginBottom: spacing.sm,
+    marginTop: layout.spacing.lg,
+    marginBottom: layout.spacing.sm,
   },
   emptyText: {
     color: colors.gray[400],
     textAlign: 'center',
     fontSize: typography.sizes.md,
-    marginBottom: spacing.xl,
+    marginBottom: layout.spacing.xl,
   },
   exploreButton: {
     minWidth: 200,

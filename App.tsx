@@ -10,6 +10,8 @@ import { AudioPlayer } from './src/components/AudioPlayer';
 import { usePodcastStore } from './src/store/podcast';
 import { loginAnonymously } from './src/config/firebase';
 import { LogBox } from 'react-native';
+import { colors } from './src/theme/colors';
+import { layout } from './src/theme/layout';
 
 // Silence common warnings
 LogBox.ignoreLogs([
@@ -102,10 +104,11 @@ export default function App() {
   );
 }
 
+
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#121212',
+    backgroundColor: colors.background,
     paddingTop: Platform.OS === 'ios' ? 50 : 30,
   },
   content: {
@@ -120,9 +123,9 @@ const styles = StyleSheet.create({
     bottom: 0,
     left: 0,
     right: 0,
-    backgroundColor: '#1F2937',
+    backgroundColor: colors.card,
     borderTopWidth: 1,
-    borderTopColor: '#374151',
+    borderTopColor: colors.gray[700],
     paddingBottom: Platform.OS === 'ios' ? 20 : 0,
   },
   navbar: {

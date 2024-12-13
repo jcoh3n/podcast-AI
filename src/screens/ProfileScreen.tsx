@@ -1,16 +1,72 @@
+// src/screens/ProfileScreen.tsx
 import React from 'react';
 import { View, Text, StyleSheet, Image, TouchableOpacity, ScrollView } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
+import { colors } from '../theme/colors';
+import { layout } from '../theme/layout';
+import { typography } from '../theme/typography';
+import { accessibility } from '../utils/accessibility';
 
-export const ProfileScreen = () => {
+interface MenuItemProps {
+  icon: keyof typeof MaterialCommunityIcons.glyphMap;
+  title: string;
+  onPress: () => void;
+  isFirst?: boolean;
+  isLast?: boolean;
+}
+
+const MenuItem: React.FC<MenuItemProps> = ({ 
+  icon, 
+  title, 
+  onPress, 
+  isFirst, 
+  isLast 
+}) => (
+  <TouchableOpacity 
+    style={[
+      styles.menuItem,
+      isFirst && styles.menuItemFirst,
+      isLast && styles.menuItemLast
+    ]}
+    onPress={onPress}
+    accessibilityRole="button"
+    accessibilityLabel={title}
+  >
+    <View style={styles.menuItemContent}>
+      <MaterialCommunityIcons 
+        name={icon} 
+        size={accessibility.scaleFontSize(24)} 
+        color={colors.primary} 
+      />
+      <Text style={styles.menuText}>{title}</Text>
+    </View>
+    <MaterialCommunityIcons 
+      name="chevron-right" 
+      size={accessibility.scaleFontSize(24)} 
+      color={colors.gray[400]} 
+    />
+  </TouchableOpacity>
+);
+
+export const ProfileScreen: React.FC = () => {
+  const handleMenuPress = (option: string) => {
+    console.log(`Navigate to ${option}`);
+  };
+
   return (
-    <ScrollView style={styles.container}>
-      <View style={styles.content}>
-        <View style={styles.profileCard}>
+    <SafeAreaView style={styles.container}>
+      <ScrollView 
+        style={styles.scrollView}
+        contentContainerStyle={styles.scrollContent}
+        showsVerticalScrollIndicator={false}
+      >
+        <View style={[styles.profileCard, styles.shadow]}>
           <View style={styles.profileHeader}>
             <Image
               source={{ uri: 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde' }}
               style={styles.avatar}
+              accessibilityLabel="Profile picture"
             />
             <View style={styles.profileInfo}>
               <Text style={styles.name}>John Doe</Text>
@@ -18,25 +74,42 @@ export const ProfileScreen = () => {
             </View>
           </View>
           
-          <TouchableOpacity style={styles.editButton}>
-            <MaterialCommunityIcons name="account-edit" size={20} color="white" />
+          <TouchableOpacity 
+            style={styles.editButton}
+            onPress={() => handleMenuPress('EditProfile')}
+            accessibilityLabel="Edit profile"
+            accessibilityRole="button"
+          >
+            <MaterialCommunityIcons 
+              name="account-edit" 
+              size={accessibility.scaleFontSize(20)} 
+              color={colors.foreground} 
+            />
             <Text style={styles.editButtonText}>Edit Profile</Text>
           </TouchableOpacity>
         </View>
 
         <View style={styles.statsContainer}>
-          <View style={styles.statCard}>
+          <View style={[styles.statCard, styles.shadow]}>
             <View style={styles.statHeader}>
-              <MaterialCommunityIcons name="clock-outline" size={20} color="#8B5CF6" />
+              <MaterialCommunityIcons 
+                name="clock-outline" 
+                size={accessibility.scaleFontSize(20)} 
+                color={colors.primary} 
+              />
               <Text style={styles.statTitle}>Listening Time</Text>
             </View>
             <Text style={styles.statValue}>24h 35m</Text>
             <Text style={styles.statSubtext}>This month</Text>
           </View>
 
-          <View style={styles.statCard}>
+          <View style={[styles.statCard, styles.shadow]}>
             <View style={styles.statHeader}>
-              <MaterialCommunityIcons name="heart" size={20} color="#8B5CF6" />
+              <MaterialCommunityIcons 
+                name="heart" 
+                size={accessibility.scaleFontSize(20)} 
+                color={colors.primary} 
+              />
               <Text style={styles.statTitle}>Liked Podcasts</Text>
             </View>
             <Text style={styles.statValue}>12</Text>
@@ -44,135 +117,165 @@ export const ProfileScreen = () => {
           </View>
         </View>
 
-        <View style={styles.menuContainer}>
-          <TouchableOpacity style={styles.menuItem}>
-            <MaterialCommunityIcons name="cog-outline" size={24} color="#8B5CF6" />
-            <Text style={styles.menuText}>Settings</Text>
-            <MaterialCommunityIcons name="chevron-right" size={24} color="#6B7280" />
-          </TouchableOpacity>
-
-          <TouchableOpacity style={styles.menuItem}>
-            <MaterialCommunityIcons name="help-circle-outline" size={24} color="#8B5CF6" />
-            <Text style={styles.menuText}>Help & Support</Text>
-            <MaterialCommunityIcons name="chevron-right" size={24} color="#6B7280" />
-          </TouchableOpacity>
-
-          <TouchableOpacity style={styles.menuItem}>
-            <MaterialCommunityIcons name="information-outline" size={24} color="#8B5CF6" />
-            <Text style={styles.menuText}>About</Text>
-            <MaterialCommunityIcons name="chevron-right" size={24} color="#6B7280" />
-          </TouchableOpacity>
+        <View style={[styles.menuContainer, styles.shadow]}>
+          <MenuItem
+            icon="cog-outline"
+            title="Settings"
+            onPress={() => handleMenuPress('Settings')}
+            isFirst
+          />
+          <MenuItem
+            icon="help-circle-outline"
+            title="Help & Support"
+            onPress={() => handleMenuPress('Support')}
+          />
+          <MenuItem
+            icon="information-outline"
+            title="About"
+            onPress={() => handleMenuPress('About')}
+            isLast
+          />
         </View>
-      </View>
-    </ScrollView>
+      </ScrollView>
+    </SafeAreaView>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#121212',
+    backgroundColor: colors.background,
   },
-  content: {
-    padding: 16,
+  scrollView: {
+    flex: 1,
+  },
+  scrollContent: {
+    padding: layout.spacing.md,
+  },
+  shadow: {
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 3.84,
+    elevation: 5,
   },
   profileCard: {
-    backgroundColor: 'rgba(31, 41, 55, 0.5)',
-    borderRadius: 12,
-    padding: 16,
-    marginBottom: 16,
+    backgroundColor: colors.gray[800],
+    borderRadius: layout.borderRadius.lg,
+    padding: layout.spacing.lg,
+    marginBottom: layout.spacing.md,
     borderWidth: 1,
-    borderColor: 'rgba(55, 65, 81, 0.5)',
+    borderColor: colors.gray[700],
   },
   profileHeader: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginBottom: 16,
+    marginBottom: layout.spacing.lg,
   },
   avatar: {
-    width: 80,
-    height: 80,
-    borderRadius: 40,
+    width: accessibility.touchableSize.large,
+    height: accessibility.touchableSize.large,
+    borderRadius: accessibility.touchableSize.large / 2,
     borderWidth: 2,
-    borderColor: '#8B5CF6',
+    borderColor: colors.primary,
   },
   profileInfo: {
-    marginLeft: 16,
+    marginLeft: layout.spacing.md,
+    flex: 1,
   },
   name: {
-    fontSize: 24,
-    fontWeight: '600',
-    color: 'white',
+    fontSize: typography.sizes.xl,
+    fontFamily: typography.fonts.bold,
+    color: colors.foreground,
   },
   membership: {
-    color: '#9CA3AF',
-    fontSize: 16,
+    fontSize: typography.sizes.md,
+    color: colors.gray[400],
+    marginTop: layout.spacing.xs,
   },
   editButton: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: '#374151',
-    padding: 12,
-    borderRadius: 8,
+    backgroundColor: colors.gray[700],
+    padding: layout.spacing.md,
+    borderRadius: layout.borderRadius.md,
+    minHeight: accessibility.touchableSize.min,
   },
   editButtonText: {
-    color: 'white',
-    marginLeft: 8,
-    fontSize: 16,
-    fontWeight: '500',
+    color: colors.foreground,
+    marginLeft: layout.spacing.sm,
+    fontSize: typography.sizes.md,
+    fontFamily: typography.fonts.medium,
   },
   statsContainer: {
     flexDirection: 'row',
-    justifyContent: 'space-between',
-    gap: 16,
-    marginBottom: 16,
+    gap: layout.spacing.md,
+    marginBottom: layout.spacing.lg,
   },
   statCard: {
     flex: 1,
-    backgroundColor: 'rgba(31, 41, 55, 0.5)',
-    borderRadius: 12,
-    padding: 16,
+    backgroundColor: colors.gray[800],
+    borderRadius: layout.borderRadius.lg,
+    padding: layout.spacing.md,
     borderWidth: 1,
-    borderColor: 'rgba(55, 65, 81, 0.5)',
+    borderColor: colors.gray[700],
   },
   statHeader: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginBottom: 8,
+    marginBottom: layout.spacing.sm,
   },
   statTitle: {
-    color: 'white',
-    fontSize: 16,
-    fontWeight: '600',
-    marginLeft: 8,
+    color: colors.foreground,
+    fontSize: typography.sizes.md,
+    fontFamily: typography.fonts.semibold,
+    marginLeft: layout.spacing.sm,
   },
   statValue: {
-    color: 'white',
-    fontSize: 24,
-    fontWeight: '700',
+    color: colors.foreground,
+    fontSize: typography.sizes.xl,
+    fontFamily: typography.fonts.bold,
   },
   statSubtext: {
-    color: '#9CA3AF',
-    fontSize: 14,
+    color: colors.gray[400],
+    fontSize: typography.sizes.sm,
+    marginTop: layout.spacing.xs,
   },
   menuContainer: {
-    backgroundColor: 'rgba(31, 41, 55, 0.5)',
-    borderRadius: 12,
+    backgroundColor: colors.gray[800],
+    borderRadius: layout.borderRadius.lg,
     borderWidth: 1,
-    borderColor: 'rgba(55, 65, 81, 0.5)',
+    borderColor: colors.gray[700],
+    overflow: 'hidden',
   },
   menuItem: {
     flexDirection: 'row',
     alignItems: 'center',
-    padding: 16,
+    justifyContent: 'space-between',
+    padding: layout.spacing.md,
+    minHeight: accessibility.touchableSize.default,
     borderBottomWidth: 1,
-    borderBottomColor: 'rgba(55, 65, 81, 0.5)',
+    borderBottomColor: colors.gray[700],
+  },
+  menuItemContent: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  menuItemFirst: {
+    borderTopLeftRadius: layout.borderRadius.lg,
+    borderTopRightRadius: layout.borderRadius.lg,
+  },
+  menuItemLast: {
+    borderBottomWidth: 0,
+    borderBottomLeftRadius: layout.borderRadius.lg,
+    borderBottomRightRadius: layout.borderRadius.lg,
   },
   menuText: {
-    color: 'white',
-    fontSize: 16,
-    marginLeft: 12,
+    color: colors.foreground,
+    fontSize: typography.sizes.md,
+    fontFamily: typography.fonts.medium,
+    marginLeft: layout.spacing.md,
     flex: 1,
   },
 });
