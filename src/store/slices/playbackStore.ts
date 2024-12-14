@@ -14,6 +14,7 @@ interface PlaybackState {
   togglePlayback: () => Promise<void>;
   seekTo: (position: number) => Promise<void>;
   updateProgress: (progress: number, duration: number) => void;
+  cleanup: () => Promise<void>;
 }
 
 export const usePlaybackStore = create<PlaybackState>((set, get) => ({
@@ -49,6 +50,7 @@ export const usePlaybackStore = create<PlaybackState>((set, get) => ({
         error: 'Failed to load podcast',
         isLoading: false 
       });
+      throw error;
     }
   },
 
@@ -59,6 +61,7 @@ export const usePlaybackStore = create<PlaybackState>((set, get) => ({
       set({ isPlaying: !isPlaying });
     } catch (error) {
       set({ error: 'Playback error occurred' });
+      throw error;
     }
   },
 
@@ -68,6 +71,7 @@ export const usePlaybackStore = create<PlaybackState>((set, get) => ({
       set({ progress: position });
     } catch (error) {
       set({ error: 'Seek error occurred' });
+      throw error;
     }
   },
 
@@ -76,6 +80,21 @@ export const usePlaybackStore = create<PlaybackState>((set, get) => ({
     const { currentPodcast } = get();
     if (currentPodcast) {
       AudioService.saveProgress(currentPodcast.id, progress);
+    }
+  },
+
+  cleanup: async () => {
+    try {
+      await AudioService.cleanup();
+      set({
+        currentPodcast: null,
+        isPlaying: false,
+        progress: 0,
+        duration: 0,
+        error: null
+      });
+    } catch (error) {
+      console.error('Error cleaning up playback:', error);
     }
   }
 }));

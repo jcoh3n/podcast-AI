@@ -29,6 +29,7 @@ class AudioService {
         staysActiveInBackground: true,
         playsInSilentModeIOS: true,
         shouldDuckAndroid: true,
+        playThroughEarpieceAndroid: false,
       });
 
       this.isInitialized = true;
@@ -50,16 +51,20 @@ class AudioService {
     try {
       if (this.sound) {
         await this.sound.unloadAsync();
+        this.sound = null;
       }
 
       const { sound } = await Audio.Sound.createAsync(
         { uri },
-        { shouldPlay: false },
-        this.onPlaybackStatusUpdate
+        { 
+          shouldPlay: false,
+          progressUpdateIntervalMillis: 500,
+          positionMillis: 0,
+        },
+        this.onPlaybackStatusUpdate,
       );
 
       this.sound = sound;
-      await sound.setProgressUpdateIntervalAsync(500); // Update every 500ms
     } catch (error) {
       console.error('Error loading audio:', error);
       throw error;
@@ -71,7 +76,10 @@ class AudioService {
     
     try {
       if (isPlaying) {
-        await this.sound.playAsync();
+        const status = await this.sound.getStatusAsync();
+        if (status.isLoaded) {
+          await this.sound.playAsync();
+        }
       } else {
         await this.sound.pauseAsync();
       }
@@ -84,7 +92,10 @@ class AudioService {
   async seek(position: number) {
     if (!this.sound) return;
     try {
-      await this.sound.setPositionAsync(position * 1000);
+      const status = await this.sound.getStatusAsync();
+      if (status.isLoaded) {
+        await this.sound.setPositionAsync(position * 1000);
+      }
     } catch (error) {
       console.error('Error seeking:', error);
       throw error;
@@ -104,8 +115,12 @@ class AudioService {
 
   async cleanup() {
     if (this.sound) {
-      await this.sound.unloadAsync();
-      this.sound = null;
+      try {
+        await this.sound.unloadAsync();
+        this.sound = null;
+      } catch (error) {
+        console.error('Error cleaning up audio:', error);
+      }
     }
   }
 }
