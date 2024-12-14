@@ -1,55 +1,57 @@
 import React from 'react';
-import { View, StyleSheet, TouchableOpacity } from 'react-native';
-import { Audio } from 'expo-av';
+import { View, StyleSheet, TouchableOpacity, Text } from 'react-native';
 import { usePlaybackStore } from '../../../store/slices/playbackStore';
-import { colors } from '../../../theme/colors'; // Ajout de l'import manquant
+import { colors } from '../../../theme/colors';
 
-interface Props {
-  sound: Audio.Sound | null;
-}
+export const ProgressBar = () => {
+  const { progress, duration, seekTo } = usePlaybackStore();
+  
+  const formatTime = (seconds: number): string => {
+    const mins = Math.floor(seconds / 60);
+    const secs = Math.floor(seconds % 60);
+    return `${mins}:${secs.toString().padStart(2, '0')}`;
+  };
 
-export const ProgressBar: React.FC<Props> = ({ sound }) => {
-  const { progress, duration } = usePlaybackStore();
-  
-  const progressPercentage = duration > 0 ? (progress / duration) * 100 : 0;
-  
-  const handleSeek = async (evt: any) => {
-    if (!sound) return;
-    
-    const { locationX, measure } = evt.nativeEvent;
+  const handleSeek = (event: any) => {
+    const { locationX, measure } = event.nativeEvent;
     const progressBarWidth = measure?.width || 300;
     const percentage = locationX / progressBarWidth;
     const newPosition = percentage * duration;
-    
-    try {
-      await sound.setPositionAsync(newPosition * 1000);
-    } catch (error) {
-      console.error('Error seeking:', error);
-    }
+    seekTo(newPosition);
   };
 
+  const progressPercentage = duration > 0 ? (progress / duration) * 100 : 0;
+
   return (
-    <TouchableOpacity
-      style={styles.container}
-      onPress={handleSeek}
-    >
-      <View style={styles.background}>
-        <View 
-          style={[
-            styles.progress, 
-            { width: `${progressPercentage}%` }
-          ]} 
-        />
-      </View>
-    </TouchableOpacity>
+    <View style={styles.container}>
+      <TouchableOpacity 
+        style={styles.progressBar} 
+        onPress={handleSeek}
+      >
+        <View style={styles.background}>
+          <View 
+            style={[
+              styles.progress, 
+              { width: `${progressPercentage}%` }
+            ]} 
+          />
+        </View>
+      </TouchableOpacity>
+      <Text style={styles.timeText}>
+        {formatTime(progress)} / {formatTime(duration)}
+      </Text>
+    </View>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
+    width: '100%',
+    paddingHorizontal: 16,
+  },
+  progressBar: {
     height: 20,
     justifyContent: 'center',
-    paddingHorizontal: 12,
   },
   background: {
     height: 3,
@@ -61,4 +63,10 @@ const styles = StyleSheet.create({
     height: '100%',
     backgroundColor: colors.primary,
   },
+  timeText: {
+    color: colors.gray[400],
+    fontSize: 12,
+    marginTop: 4,
+    textAlign: 'right',
+  }
 });

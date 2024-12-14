@@ -1,11 +1,14 @@
 import React from 'react';
-import { View, Text, Image, StyleSheet, TouchableOpacity, Platform } from 'react-native';
+import { View, Text, Image, StyleSheet, TouchableOpacity, Platform, ActivityIndicator } from 'react-native';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { usePodcastStore } from '../../store/podcast';
 import { colors } from '../../theme/colors';
+import { ProgressBar } from './components/ProgressBar';
+import { usePlaybackStore } from '../../store/slices/playbackStore';
 
 export const AudioPlayer = () => {
-  const { currentPodcast, isPlaying, togglePlayback } = usePodcastStore();
+  const { currentPodcast } = usePodcastStore();
+  const { isLoading, isPlaying, togglePlayback } = usePlaybackStore();
 
   if (!currentPodcast) return null;
   
@@ -28,7 +31,7 @@ export const AudioPlayer = () => {
         </View>
 
         <View style={styles.rightSection}>
-          <Text style={styles.time}>0:00 / 0:00</Text>
+          <ProgressBar />
           <View style={styles.controls}>
             <TouchableOpacity 
               style={styles.controlButton}
@@ -38,19 +41,24 @@ export const AudioPlayer = () => {
               <MaterialCommunityIcons name="skip-previous" size={24} color="white" />
             </TouchableOpacity>
             
-            <TouchableOpacity 
-              style={styles.playButton} 
-              onPress={togglePlayback}
-              accessibilityLabel={isPlaying ? "Pause" : "Play"}
-              accessibilityRole="button"
-            >
-              <MaterialCommunityIcons 
-                name={isPlaying ? "pause" : "play"} 
-                size={28} 
-                color="white"
-                style={styles.playIcon}
-              />
-            </TouchableOpacity>
+            {isLoading ? (
+              <View style={styles.playButton}>
+                <ActivityIndicator color="white" />
+              </View>
+            ) : (
+              <TouchableOpacity 
+                style={styles.playButton} 
+                onPress={togglePlayback}
+                accessibilityLabel={isPlaying ? "Pause" : "Play"}
+                accessibilityRole="button"
+              >
+                <MaterialCommunityIcons 
+                  name={isPlaying ? "pause" : "play"} 
+                  size={28} 
+                  color="white"
+                />
+              </TouchableOpacity>
+            )}
             
             <TouchableOpacity 
               style={styles.controlButton}
@@ -71,8 +79,6 @@ const styles = StyleSheet.create({
     width: '100%',
     position: 'absolute',
     bottom: Platform.OS === 'ios' ? 88 : 60,
-    left: 0,
-    right: 0,
     backgroundColor: colors.card,
     borderTopWidth: 1,
     borderTopColor: colors.gray[700],
@@ -88,9 +94,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     flex: 1,
     marginRight: 12,
-  },
-  rightSection: {
-    alignItems: 'flex-end',
   },
   cover: {
     width: 48,
@@ -110,14 +113,14 @@ const styles = StyleSheet.create({
     color: colors.gray[400],
     fontSize: 14,
   },
-  time: {
-    color: colors.gray[400],
-    fontSize: 12,
-    marginBottom: 4,
+  rightSection: {
+    flex: 1,
   },
   controls: {
     flexDirection: 'row',
     alignItems: 'center',
+    justifyContent: 'center',
+    marginTop: 8,
   },
   controlButton: {
     padding: 8,
@@ -129,9 +132,6 @@ const styles = StyleSheet.create({
     borderRadius: 22,
     justifyContent: 'center',
     alignItems: 'center',
-    marginHorizontal: 8,
-  },
-  playIcon: {
-    marginLeft: Platform.OS === 'ios' ? 2 : 0,
-  },
+    marginHorizontal: 16,
+  }
 });
