@@ -18,86 +18,45 @@ export const AudioPlayer = () => {
   };
 
   if (!currentPodcast) return null;
-  
+
   return (
     <AudioErrorBoundary onRetry={handleRetry}>
       <View style={styles.container}>
-        <View style={styles.content}>
-          <View style={styles.leftSection}>
+        {/* Progress Bar */}
+        <ProgressBar style={styles.progressBar} />
+
+        <View style={styles.controlsContainer}>
+          {/* Left Side: Podcast Info */}
+          <View style={styles.leftSide}>
             <Image
               source={{ uri: currentPodcast.coverUrl }}
               style={styles.cover}
-              accessibilityLabel={`Cover image for ${currentPodcast.title}`}
             />
-            <View style={styles.titleContainer}>
-              <Text 
-                style={styles.title} 
-                numberOfLines={1}
-                accessibilityLabel={`Now playing: ${currentPodcast.title}`}
-              >
-                {currentPodcast.title}
-              </Text>
-              <Text 
-                style={styles.subtitle} 
-                numberOfLines={1}
-                accessibilityLabel={`By ${currentPodcast.author}`}
-              >
-                {currentPodcast.author}
-              </Text>
+            <View style={styles.textContainer}>
+              <Text style={styles.title} numberOfLines={1}>{currentPodcast.title}</Text>
+              <Text style={styles.author} numberOfLines={1}>{currentPodcast.author}</Text>
             </View>
           </View>
 
-          <View style={styles.rightSection}>
-            <ProgressBar />
-            <View style={styles.controls}>
+          {/* Right Side: Play/Pause Button */}
+          <View style={styles.rightSide}>
+            {isLoading ? (
+              <ActivityIndicator color={colors.foreground} size={18} />
+            ) : (
               <TouchableOpacity 
-                style={styles.controlButton}
-                onPress={() => console.log('Previous track')}
-                accessibilityLabel="Previous track"
+                style={styles.playButton} 
+                onPress={togglePlayback}
+                accessible={true} 
+                accessibilityLabel={isPlaying ? "Pause" : "Play"}
                 accessibilityRole="button"
-                accessibilityHint="Play previous episode"
               >
                 <MaterialCommunityIcons 
-                  name="skip-previous" 
+                  name={isPlaying ? "pause" : "play"} 
                   size={24} 
                   color={colors.foreground} 
                 />
               </TouchableOpacity>
-              
-              {isLoading ? (
-                <View style={styles.playButton}>
-                  <ActivityIndicator color={colors.foreground} />
-                </View>
-              ) : (
-                <TouchableOpacity 
-                  style={styles.playButton} 
-                  onPress={togglePlayback}
-                  accessibilityLabel={isPlaying ? "Pause" : "Play"}
-                  accessibilityRole="button"
-                  accessibilityState={{ selected: isPlaying }}
-                >
-                  <MaterialCommunityIcons 
-                    name={isPlaying ? "pause" : "play"} 
-                    size={28} 
-                    color={colors.foreground}
-                  />
-                </TouchableOpacity>
-              )}
-              
-              <TouchableOpacity 
-                style={styles.controlButton}
-                onPress={() => console.log('Next track')}
-                accessibilityLabel="Next track"
-                accessibilityRole="button"
-                accessibilityHint="Play next episode"
-              >
-                <MaterialCommunityIcons 
-                  name="skip-next" 
-                  size={24} 
-                  color={colors.foreground} 
-                />
-              </TouchableOpacity>
-            </View>
+            )}
           </View>
         </View>
       </View>
@@ -109,73 +68,62 @@ const styles = StyleSheet.create({
   container: {
     width: '100%',
     position: 'absolute',
-    bottom: Platform.OS === 'ios' ? 88 : 60,
-    backgroundColor: colors.card,
-    borderTopWidth: 1,
-    borderTopColor: colors.gray[700],
-    shadowColor: '#000',
-    shadowOffset: {
-      width: 0,
-      height: -2,
-    },
-    shadowOpacity: 0.25,
-    shadowRadius: 3.84,
-    elevation: 5,
-  },
-  content: {
-    flexDirection: 'row',
+    bottom: Platform.OS === 'ios' ? 100 : 80, // Adjust bottom space for all platforms
+    backgroundColor: colors.card, // Use consistent background color
+    borderRadius: 24, // Rounded corners for a "bubble" look
+    paddingHorizontal: 16,
+    paddingBottom: 8, // Reduced bottom padding for a thinner look
+    flexDirection: 'column',
     alignItems: 'center',
+    opacity: 0.95, // Smooth opacity for subtle effect
+    height: 70, // Reduced height to make it thinner
+  },
+  progressBar: {
+    width: '90%', 
+    height: 2, // Thinner progress bar
+    backgroundColor: colors.gray[600],
+    borderRadius: 1, // Rounded corners on the progress bar
+    marginBottom: 8, // Less space between progress bar and controls
+  },
+  controlsContainer: {
+    flexDirection: 'row',
     justifyContent: 'space-between',
-    padding: 12,
+    alignItems: 'center',
+    width: '100%',
   },
-  leftSection: {
+  leftSide: {
     flexDirection: 'row',
     alignItems: 'center',
-    flex: 1,
-    marginRight: 12,
+  },
+  rightSide: {
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginLeft: 12, // Slightly reduced margin for button
   },
   cover: {
-    width: 48,
-    height: 48,
-    borderRadius: 8,
-    backgroundColor: colors.gray[800],
+    width: 36, // Slightly smaller cover for a thinner look
+    height: 36,
+    borderRadius: 8, 
+    marginRight: 12,
+    borderWidth: 2,
+    borderColor: colors.foreground,
   },
-  titleContainer: {
-    marginLeft: 12,
-    flex: 1,
+  textContainer: {
+    flexDirection: 'column',
+    maxWidth: 160, // Slightly reduced max width to fit in a thinner layout
   },
   title: {
+    fontSize: 14, // Smaller title for a more compact look
+    fontWeight: '600',
     color: colors.foreground,
-    fontSize: 16,
-    fontWeight: '500',
   },
-  subtitle: {
+  author: {
+    fontSize: 10, // Smaller author text
     color: colors.gray[400],
-    fontSize: 14,
-  },
-  rightSection: {
-    flex: 1,
-  },
-  controls: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginTop: 8,
-  },
-  controlButton: {
-    padding: 8,
-    minWidth: 44,
-    minHeight: 44,
-    justifyContent: 'center',
-    alignItems: 'center',
   },
   playButton: {
-    backgroundColor: colors.primary,
-    width: 44,
-    height: 44,
-    borderRadius: 22,
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginHorizontal: 16,
-  }
+    padding: 6, // Reduced padding for a smaller button
+    backgroundColor: 'transparent', // No background for simplicity
+    opacity: 0.8, // Slight opacity effect when active
+  },
 });
