@@ -66,25 +66,32 @@ export const AudioPlayer = () => {
 
 const styles = StyleSheet.create({
   container: {
-    width: '100%',
+    width: '90%',
     position: 'absolute',
-    bottom: Platform.OS === 'ios' ? 100 : 80, // Adjust bottom space for all platforms
-    backgroundColor: colors.card, // Use consistent background color
-    borderRadius: 24, // Rounded corners for a "bubble" look
+    bottom: Platform.OS === 'ios' ? 100 : 80,
+    backgroundColor: colors.card,
+    borderRadius: 24,
     paddingHorizontal: 16,
-    paddingBottom: 8, // Reduced bottom padding for a thinner look
+    paddingBottom: 8,
     flexDirection: 'column',
     alignItems: 'center',
-    opacity: 0.95, // Smooth opacity for subtle effect
-    height: 70, // Reduced height to make it thinner
+    opacity: 0.95,
+    height: 70,
+    alignSelf: 'center',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.1,
+    shadowRadius: 10,
+    elevation: 8,
   },
   progressBar: {
-    width: '90%', 
-    height: 2, // Thinner progress bar
-    backgroundColor: colors.gray[600],
-    borderRadius: 1, // Rounded corners on the progress bar
-    marginBottom: 8, // Less space between progress bar and controls
-  },
+  width: '90%',
+  height: 2,
+  backgroundColor: colors.gray[600],
+  borderRadius: 1,
+  marginTop: 4, // Adding a small margin to the top to push the progress bar down slightly
+  marginBottom: 0, // Removing margin at the bottom to bring it closer to the top
+},
   controlsContainer: {
     flexDirection: 'row',
     justifyContent: 'space-between',
@@ -98,32 +105,32 @@ const styles = StyleSheet.create({
   rightSide: {
     justifyContent: 'center',
     alignItems: 'center',
-    marginLeft: 12, // Slightly reduced margin for button
+    marginLeft: 12,
   },
   cover: {
-    width: 36, // Slightly smaller cover for a thinner look
+    width: 36,
     height: 36,
-    borderRadius: 8, 
+    borderRadius: 8,
     marginRight: 12,
     borderWidth: 2,
     borderColor: colors.foreground,
   },
   textContainer: {
     flexDirection: 'column',
-    maxWidth: 160, // Slightly reduced max width to fit in a thinner layout
+    maxWidth: 160,
   },
   title: {
-    fontSize: 14, // Smaller title for a more compact look
+    fontSize: 14,
     fontWeight: '600',
     color: colors.foreground,
   },
   author: {
-    fontSize: 10, // Smaller author text
+    fontSize: 10,
     color: colors.gray[400],
   },
   playButton: {
-    padding: 6, // Reduced padding for a smaller button
-    backgroundColor: 'transparent', // No background for simplicity
-    opacity: 0.8, // Slight opacity effect when active
+    padding: 6,
+    backgroundColor: 'transparent',
+    opacity: 0.8,
   },
 });

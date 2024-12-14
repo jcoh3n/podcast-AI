@@ -14,17 +14,29 @@ export const TabNavigator = () => {
     <Tab.Navigator
       screenOptions={{
         tabBarStyle: {
-          backgroundColor: colors.card,
-          borderTopColor: colors.gray[700],
-          borderTopWidth: 1,
-          height: Platform.OS === 'ios' ? 88 : 60,
-          paddingBottom: Platform.OS === 'ios' ? 28 : 8,
-          paddingTop: 8,
+          backgroundColor: 'linear-gradient(180deg, #2c3e50, #34495e)', // Adding gradient background
+          borderTopColor: 'transparent', // Remove any border
+          height: Platform.OS === 'ios' ? 80 : 60, // Maintain a clean and balanced height
+          paddingBottom: Platform.OS === 'ios' ? 20 : 8, // Adjust padding for a lighter feel
+          borderRadius: 16, // Smooth rounded corners for a polished look
+          marginHorizontal: 16, // Side margin to ensure space between screen edge and tab bar
+          shadowColor: '#000', // Soft shadow for a floating effect
+          shadowOffset: { width: 0, height: -4 },
+          shadowOpacity: 0.05, // Reduced shadow opacity for a more subtle effect
+          shadowRadius: 10,
+          elevation: 4, // Subtle elevation for Android
         },
-        tabBarActiveTintColor: colors.primary,
-        tabBarInactiveTintColor: colors.gray[400],
+        tabBarActiveTintColor: colors.primary, // Active icon color
+        tabBarInactiveTintColor: colors.gray[400], // Inactive icon color
         headerShown: false,
-        tabBarShowLabel: true,
+        tabBarShowLabel: false, // No labels for simplicity
+        tabBarIconStyle: {
+          transform: [{ scale: 1.2 }], // Increase icon size slightly on active state
+          transition: 'transform 0.3s ease, color 0.3s ease', // Smooth scaling and color transition
+        },
+        tabBarItemStyle: {
+          paddingVertical: 6, // Ensuring the spacing looks balanced
+        },
       }}
     >
       <Tab.Screen
