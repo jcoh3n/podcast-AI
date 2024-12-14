@@ -6,7 +6,11 @@ export interface Podcast {
   duration: string;
   description?: string;
   category?: string;
-  audioUrl?: string;
+  audioUrl: string;
+  publishDate: string;
+  totalDuration: number; // durée en secondes
+  episodeNumber: number;
+  fileSize: string;
 }
 
 export interface UserPodcastData {

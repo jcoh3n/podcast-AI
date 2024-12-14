@@ -2,6 +2,7 @@ import React from 'react';
 import { View, Text, Image, StyleSheet, TouchableOpacity, Platform } from 'react-native';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { usePodcastStore } from '../../store/podcast';
+import { colors } from '../../theme/colors';
 
 export const AudioPlayer = () => {
   const { currentPodcast, isPlaying, togglePlayback } = usePodcastStore();
@@ -26,37 +27,39 @@ export const AudioPlayer = () => {
           </View>
         </View>
 
-        <View style={styles.controls}>
-          <TouchableOpacity 
-            style={styles.controlButton}
-            accessibilityLabel="Previous track"
-            accessibilityRole="button"
-          >
-            <MaterialCommunityIcons name="skip-previous" size={24} color="white" />
-          </TouchableOpacity>
-          
-          <TouchableOpacity 
-            style={styles.playButton} 
-            onPress={togglePlayback}
-            accessibilityLabel={isPlaying ? "Pause" : "Play"}
-            accessibilityRole="button"
-            accessibilityState={{ selected: isPlaying }}
-          >
-            <MaterialCommunityIcons 
-              name={isPlaying ? "pause" : "play"} 
-              size={28} 
-              color="white"
-              style={styles.playIcon}
-            />
-          </TouchableOpacity>
-          
-          <TouchableOpacity 
-            style={styles.controlButton}
-            accessibilityLabel="Next track"
-            accessibilityRole="button"
-          >
-            <MaterialCommunityIcons name="skip-next" size={24} color="white" />
-          </TouchableOpacity>
+        <View style={styles.rightSection}>
+          <Text style={styles.time}>0:00 / 0:00</Text>
+          <View style={styles.controls}>
+            <TouchableOpacity 
+              style={styles.controlButton}
+              accessibilityLabel="Previous track"
+              accessibilityRole="button"
+            >
+              <MaterialCommunityIcons name="skip-previous" size={24} color="white" />
+            </TouchableOpacity>
+            
+            <TouchableOpacity 
+              style={styles.playButton} 
+              onPress={togglePlayback}
+              accessibilityLabel={isPlaying ? "Pause" : "Play"}
+              accessibilityRole="button"
+            >
+              <MaterialCommunityIcons 
+                name={isPlaying ? "pause" : "play"} 
+                size={28} 
+                color="white"
+                style={styles.playIcon}
+              />
+            </TouchableOpacity>
+            
+            <TouchableOpacity 
+              style={styles.controlButton}
+              accessibilityLabel="Next track"
+              accessibilityRole="button"
+            >
+              <MaterialCommunityIcons name="skip-next" size={24} color="white" />
+            </TouchableOpacity>
+          </View>
         </View>
       </View>
     </View>
@@ -66,8 +69,13 @@ export const AudioPlayer = () => {
 const styles = StyleSheet.create({
   container: {
     width: '100%',
-    borderBottomWidth: 1,
-    borderBottomColor: '#374151',
+    position: 'absolute',
+    bottom: Platform.OS === 'ios' ? 88 : 60,
+    left: 0,
+    right: 0,
+    backgroundColor: colors.card,
+    borderTopWidth: 1,
+    borderTopColor: colors.gray[700],
   },
   content: {
     flexDirection: 'row',
@@ -79,6 +87,10 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     flex: 1,
+    marginRight: 12,
+  },
+  rightSection: {
+    alignItems: 'flex-end',
   },
   cover: {
     width: 48,
@@ -90,24 +102,28 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   title: {
-    color: 'white',
+    color: colors.foreground,
     fontSize: 16,
     fontWeight: '500',
   },
   subtitle: {
-    color: '#9CA3AF',
+    color: colors.gray[400],
     fontSize: 14,
+  },
+  time: {
+    color: colors.gray[400],
+    fontSize: 12,
+    marginBottom: 4,
   },
   controls: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginLeft: 12,
   },
   controlButton: {
     padding: 8,
   },
   playButton: {
-    backgroundColor: '#8B5CF6',
+    backgroundColor: colors.primary,
     width: 44,
     height: 44,
     borderRadius: 22,

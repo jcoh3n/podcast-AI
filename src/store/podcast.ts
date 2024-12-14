@@ -1,79 +1,38 @@
-// src/store/podcast.ts
-import { create } from 'zustand';
-import { mockPodcasts } from '../data/mockPodcasts';
+import { usePlaybackStore } from './slices/playbackStore';
+import { useLibraryStore } from './slices/libraryStore';
+import { useUserStore } from './slices/userStore';
+import { Podcast } from '../types/podcast';
 
-export interface Podcast {
-  id: string;
-  title: string;
-  author: string;
-  coverUrl: string;
-  duration: string;
-  category?: string;
-  description?: string;
-}
+// Store combiné pour la rétrocompatibilité
+export const usePodcastStore = () => {
+  const playback = usePlaybackStore();
+  const library = useLibraryStore();
+  const user = useUserStore();
 
-interface PodcastStore {
-  // State
-  podcasts: Podcast[];
-  likedPodcasts: Set<string>;
-  recentPodcasts: Podcast[];
-  currentPodcast: Podcast | null;
-  isPlaying: boolean;
-  isLoading: boolean;
-  error: string | null;
+  return {
+    // Playback
+    currentPodcast: playback.currentPodcast,
+    isPlaying: playback.isPlaying,
+    togglePlayback: playback.togglePlayback,
+    setCurrentPodcast: (podcast: Podcast) => {
+      playback.setCurrentPodcast(podcast);
+      library.addToRecent(podcast);
+    },
 
-  // Actions
-  initializeStore: () => void;
-  toggleLike: (podcastId: string) => void;
-  setCurrentPodcast: (podcast: Podcast) => void;
-  togglePlayback: () => void;
-}
+    // Library
+    podcasts: library.podcasts,
+    likedPodcasts: library.likedPodcasts,
+    recentPodcasts: library.recentPodcasts,
+    isLoading: library.isLoading,
+    error: library.error,
+    initializeStore: library.initializeLibrary,
+    toggleLike: library.toggleLike,
 
-export const usePodcastStore = create<PodcastStore>((set, get) => ({
-  podcasts: [],
-  likedPodcasts: new Set(),
-  recentPodcasts: [],
-  currentPodcast: null,
-  isPlaying: false,
-  isLoading: false,
-  error: null,
+    // User
+    userId: user.userId,
+    isLoggedIn: user.isLoggedIn,
+    preferences: user.preferences,
+  };
+};
 
-  initializeStore: () => {
-    set({
-      podcasts: mockPodcasts,
-      isLoading: false,
-      error: null
-    });
-  },
-
-  toggleLike: (podcastId: string) => {
-    const { likedPodcasts } = get();
-    const newLiked = new Set(likedPodcasts);
-    
-    if (newLiked.has(podcastId)) {
-      newLiked.delete(podcastId);
-    } else {
-      newLiked.add(podcastId);
-    }
-    
-    set({ likedPodcasts: newLiked });
-  },
-
-  setCurrentPodcast: (podcast: Podcast) => {
-    const { recentPodcasts } = get();
-    const newRecentPodcasts = [
-      podcast,
-      ...recentPodcasts.filter(p => p.id !== podcast.id)
-    ].slice(0, 5); // Keep only last 5
-
-    set({ 
-      currentPodcast: podcast, 
-      isPlaying: true,
-      recentPodcasts: newRecentPodcasts
-    });
-  },
-
-  togglePlayback: () => {
-    set(state => ({ isPlaying: !state.isPlaying }));
-  },
-}));
+export type { Podcast };
