@@ -6,7 +6,8 @@ import {
   StyleSheet, 
   TouchableOpacityProps,
   Animated,
-  Easing
+  Easing,
+  ViewStyle
 } from 'react-native';
 import { colors } from '../../theme/colors';
 import { spacing } from '../../theme/spacing';

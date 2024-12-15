@@ -49,7 +49,7 @@ export const HomeScreen: React.FC = () => {
     return (
       <SafeAreaView style={styles.container}>
         <View style={styles.centerContent}>
-          <Text style={styles.errorText}>{error.message}</Text>
+          <Text style={styles.errorText}>{error}</Text>
         </View>
       </SafeAreaView>
     );
@@ -109,18 +109,17 @@ export const HomeScreen: React.FC = () => {
           <View style={styles.section}>
             <Text style={styles.sectionTitle}>Continue Listening</Text>
             <PodcastList
+              title="Continue Listening"
               podcasts={recentPodcasts}
-              horizontal={true}
             />
           </View>
         )}
 
         {/* All Podcasts */}
         <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Popular Podcasts</Text>
           <PodcastList
+            title="Popular Podcasts"
             podcasts={podcasts}
-            horizontal={false}
           />
         </View>
       </ScrollView>

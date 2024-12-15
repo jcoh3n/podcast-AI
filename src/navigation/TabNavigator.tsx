@@ -32,7 +32,6 @@ export const TabNavigator = () => {
         tabBarShowLabel: false, // No labels for simplicity
         tabBarIconStyle: {
           transform: [{ scale: 1.2 }], // Increase icon size slightly on active state
-          transition: 'transform 0.3s ease, color 0.3s ease', // Smooth scaling and color transition
         },
         tabBarItemStyle: {
           paddingVertical: 6, // Ensuring the spacing looks balanced
