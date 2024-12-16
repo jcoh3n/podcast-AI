@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { View, Text, Image, StyleSheet, TouchableOpacity, Platform, ActivityIndicator, Animated } from 'react-native';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { usePodcastStore } from '../../store/podcast';
@@ -6,10 +6,14 @@ import { colors } from '../../theme/colors';
 import { ProgressBar } from './components/ProgressBar';
 import { usePlaybackStore } from '../../store/slices/playbackStore';
 import { AudioErrorBoundary } from './ErrorBoundary';
+import { FullscreenPlayer } from '../FullscreenPlayer';
+import { useAIStore } from '../../store/slices/aiStore';
 
 export const AudioPlayer = () => {
+  const [isExpanded, setIsExpanded] = useState(false);
   const { currentPodcast } = usePodcastStore();
-  const { isLoading, isPlaying, togglePlayback, setCurrentPodcast } = usePlaybackStore();
+  const { isLoading, isPlaying, togglePlayback } = usePlaybackStore();
+  const { response, asking, askQuestion } = useAIStore();
   const slideAnim = useRef(new Animated.Value(0)).current;
   const scaleAnim = useRef(new Animated.Value(0.95)).current;
 
@@ -29,68 +33,78 @@ export const AudioPlayer = () => {
     ]).start();
   }, []);
 
-  const handleRetry = () => {
-    if (currentPodcast) {
-      setCurrentPodcast(currentPodcast);
-    }
-  };
-
   if (!currentPodcast) return null;
 
   return (
-    <AudioErrorBoundary onRetry={handleRetry}>
-      <Animated.View style={[
-        styles.container,
-        {
-          transform: [
-            { translateY: slideAnim.interpolate({
-              inputRange: [0, 1],
-              outputRange: [100, 0]
-            })},
-            { scale: scaleAnim }
-          ],
-          opacity: slideAnim
-        }
-      ]}>
-        <View style={styles.progressBarContainer}>
-          <ProgressBar style={styles.progressBar} />
-        </View>
-        
-        <View style={styles.controlsContainer}>
-          <View style={styles.leftSide}>
-            <Image
-              source={{ uri: currentPodcast.coverUrl }}
-              style={styles.cover}
-            />
-            <View style={styles.textContainer}>
-              <Text style={styles.title} numberOfLines={1}>{currentPodcast.title}</Text>
-              <Text style={styles.author} numberOfLines={1}>{currentPodcast.author}</Text>
+    <AudioErrorBoundary onRetry={() => {}}>
+      <TouchableOpacity onPress={() => setIsExpanded(true)} activeOpacity={0.9}>
+        <Animated.View style={[
+          styles.container,
+          {
+            transform: [
+              { translateY: slideAnim.interpolate({
+                inputRange: [0, 1],
+                outputRange: [100, 0]
+              })},
+              { scale: scaleAnim }
+            ],
+            opacity: slideAnim
+          }
+        ]}>
+          <View style={styles.progressBarContainer}>
+            <ProgressBar style={styles.progressBar} />
+          </View>
+          
+          <View style={styles.controlsContainer}>
+            <View style={styles.leftSide}>
+              <Image
+                source={{ uri: currentPodcast.coverUrl }}
+                style={styles.cover}
+              />
+              <View style={styles.textContainer}>
+                <Text style={styles.title} numberOfLines={1}>{currentPodcast.title}</Text>
+                <Text style={styles.author} numberOfLines={1}>{currentPodcast.author}</Text>
+              </View>
+            </View>
+
+            <View style={styles.rightSide}>
+              {isLoading ? (
+                <ActivityIndicator color={colors.primary} size={24} />
+              ) : (
+                <TouchableOpacity 
+                  style={styles.playButton} 
+                  onPress={(e) => {
+                    e.stopPropagation();
+                    togglePlayback();
+                  }}
+                >
+                  <View style={styles.playButtonInner}>
+                    <MaterialCommunityIcons 
+                      name={isPlaying ? "pause" : "play"} 
+                      size={28} 
+                      color={colors.foreground} 
+                    />
+                  </View>
+                </TouchableOpacity>
+              )}
             </View>
           </View>
+        </Animated.View>
+      </TouchableOpacity>
 
-          <View style={styles.rightSide}>
-            {isLoading ? (
-              <ActivityIndicator color={colors.primary} size={24} />
-            ) : (
-              <TouchableOpacity 
-                style={styles.playButton} 
-                onPress={togglePlayback}
-                accessible={true} 
-                accessibilityLabel={isPlaying ? "Pause" : "Play"}
-                accessibilityRole="button"
-              >
-                <View style={styles.playButtonInner}>
-                  <MaterialCommunityIcons 
-                    name={isPlaying ? "pause" : "play"} 
-                    size={28} 
-                    color={colors.foreground} 
-                  />
-                </View>
-              </TouchableOpacity>
-            )}
-          </View>
-        </View>
-      </Animated.View>
+      <FullscreenPlayer
+        isVisible={isExpanded}
+        onClose={() => setIsExpanded(false)}
+        podcast={currentPodcast}
+        isPlaying={isPlaying}
+        onPlayPause={(e) => {
+          e?.stopPropagation();
+          togglePlayback();
+        }}
+        onAskQuestion={askQuestion}
+        currentResponse={response}
+        isLoading={asking}
+      />
     </AudioErrorBoundary>
   );
 };
@@ -113,7 +127,6 @@ const styles = StyleSheet.create({
     shadowRadius: 12,
     elevation: 8,
     zIndex: 1000,
-    // Glassmorphism effect
     backgroundColor: 'rgba(31, 41, 55, 0.85)',
     backdropFilter: 'blur(10px)',
   },

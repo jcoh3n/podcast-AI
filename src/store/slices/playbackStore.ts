@@ -15,6 +15,8 @@ interface PlaybackState {
   seekTo: (position: number) => Promise<void>;
   updateProgress: (progress: number, duration: number) => void;
   cleanup: () => Promise<void>;
+  pausePlayback: () => Promise<void>;
+  resumePlayback: () => Promise<void>;
 }
 
 export const usePlaybackStore = create<PlaybackState>((set, get) => ({
@@ -96,5 +98,32 @@ export const usePlaybackStore = create<PlaybackState>((set, get) => ({
     } catch (error) {
       console.error('Error cleaning up playback:', error);
     }
+  },
+
+  pausePlayback: async () => {
+    const { isPlaying } = get();
+    if (!isPlaying) return;
+    
+    try {
+      await AudioService.playPause(false);
+      set({ isPlaying: false });
+    } catch (error) {
+      set({ error: 'Playback error occurred' });
+      throw error;
+    }
+  },
+
+  resumePlayback: async () => {
+    const { isPlaying } = get();
+    if (isPlaying) return;
+    
+    try {
+      await AudioService.playPause(true);
+      set({ isPlaying: true });
+    } catch (error) {
+      set({ error: 'Playback error occurred' });
+      throw error;
+    }
   }
+
 }));
